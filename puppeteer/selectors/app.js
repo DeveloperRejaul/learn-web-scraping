@@ -1,26 +1,35 @@
+import puppeteer from 'puppeteer';
+import { setTimeout } from 'timers/promises';
 
-import  * as Puppeteer  from "puppeteer";
-export async function selector (){
+export default async function selector() {
+  try {
+    // launch browser
+    const browser = await puppeteer.launch({
+      headless: false,
+      slowMo: 250,
+      defaultViewport: { width: 1920, height: 1080 },
+    });
 
-    try {
-        // lunching browsers
-        const browser = await Puppeteer.launch({headless:true});
-    
-        // Create a page
-        const page = await browser.newPage();
-       
-        // Go to your site
-        await page.goto('https://www.startech.com.bd/', {timeout:10000});
+    // create a new page
+    const page = await browser.newPage();
 
-        // Query for an element handle.
-        const element = await page.waitForSelector('div > .cat-items-wrap');
+    // go to url
+    await page.goto('https://devconfbd.com', { timeout: 60000 });
 
-        console.log(element)
+    // await browser.
+    const guest = await page.waitForSelector('img[alt="guest"]');
 
+    await guest.scrollIntoView();
+    await setTimeout(1000);
 
+    await page.click('img[alt="guest"]');
+    await setTimeout(1000);
 
-    } catch (error) {
-        console.log(error);
-        
-    }
+    // take screenshot
+    await page.screenshot({ path: 'guest.png' });
+
+    await browser.close();
+  } catch (error) {
+    console.log(error);
+  }
 }
